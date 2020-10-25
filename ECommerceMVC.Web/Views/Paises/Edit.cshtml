@@ -1,0 +1,27 @@
+﻿@model ECommerceMVC.Web.ViewModels.Pais.PaisEditViewModel
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Editar Tipo </h2>
+<hr />
+@using (Html.BeginForm("Edit", "Paises", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m=>m.PaisId)
+    <div class="form-group">
+        @Html.LabelFor(m => m.NombrePais)
+        @Html.TextBoxFor(m => m.NombrePais, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.NombrePais, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-warning" type="submit"><i class="fas fa-edit"></i> Editar</button>
+        <a href="@Url.Action("Index", "Paises")" class="btn btn-success">
+            <i class="fas fa-backspace"></i>
+            Volver
+        </a>
+
+    </div>
+}

@@ -1,0 +1,98 @@
+﻿@model ECommerceMVC.Web.ViewModels.Cliente.ClienteEditViewModel
+@{
+    ViewBag.Title = "Create";
+}
+<div class="container">
+    <h2>Nuevo Cliente</h2>
+    <hr />
+    @using (Html.BeginForm("Create", "Clientes", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.NombreCliente)
+            @Html.TextBoxFor(m => m.NombreCliente, new { @class = "form-control", autofocus = "autofocus" })
+            @Html.ValidationMessageFor(m => m.NombreCliente, "", new { @class = "text-danger" })
+        </div>
+        <div class="row">
+            <div class="col">
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Direccion)
+                    @Html.TextBoxFor(m => m.Direccion, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Direccion, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.CodPostal)
+                    @Html.TextBoxFor(m => m.CodPostal, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.CodPostal, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.PaisId)
+            @Html.DropDownListFor(m => m.PaisId, new SelectList(Model.Paises, "PaisId", "NombrePais"), "Seleccione País", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Paises, "", new { @class = "text-danger" })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.CiudadId)
+            @Html.DropDownListFor(m => m.CiudadId, new SelectList(Model.Ciudades, "CiudadId", "NombreCiudad"), "Seleccione Ciudad", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CiudadId, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </div>
+
+
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+            <a href="@Url.Action("Index", "Clientes")" class="btn btn-success">Volver</a>
+
+        </div>
+    }
+</div>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#PaisId").change(function() {
+                $("#CiudadId").empty();
+            });
+
+            $("#PaisId").change(function() {
+                $("#CiudadId").empty();
+                $("#CiudadId").append('<option value="0">[Seleccionar Ciudad]</option>');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetCiudades")',
+                    dataType: 'json',
+                    data: {
+                        paisId: $("#PaisId").val()
+                        
+                    },
+                    success: function(ciudades) {
+                        $.each(ciudades ,
+                            function(i, ciudad) {
+                                $("#CiudadId").append('<option value="' + ciudad.CiudadId + '">' + ciudad.NombreCiudad + '</option>');
+                            });
+                    },
+                    error: function(ex) {
+                        alert('Error al intentar cargar las ciudades.' + ex);
+                    }
+                });
+                return false;
+            });
+        });
+
+    </script>
+}

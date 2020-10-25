@@ -1,0 +1,29 @@
+﻿@model ECommerceMVC.Web.ViewModels.Ciudad.CiudadEditViewModel
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Nueva Ciudad</h2>
+<hr />
+@using (Html.BeginForm("Create", "Ciudades", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div>
+        @Html.LabelFor(m => m.PaisId)
+        @Html.DropDownListFor(m => m.PaisId, new SelectList(Model.Paises, "PaisId", "NombrePais"), "Seleccione País", new { @class = "form-control", autofocus = "autofocus" })
+        @Html.ValidationMessageFor(m => m.PaisId, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.NombreCiudad)
+        @Html.TextBoxFor(m => m.NombreCiudad, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.NombreCiudad, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a href="@Url.Action("Index", "Ciudades")" class="btn btn-success">Volver</a>
+
+    </div>
+
+
+}

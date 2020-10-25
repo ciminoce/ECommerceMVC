@@ -1,0 +1,129 @@
+﻿@model ECommerceMVC.Web.ViewModels.Listador<ECommerceMVC.Web.ViewModels.Cliente.ClienteListViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div>
+    <a href="@Url.Action("Create", "Clientes")" class="btn btn-primary" style="float: right">
+        <i class="far fa-file-alt"></i>
+        Nuevo
+    </a>
+    <h2>Lista de Clientes</h2>
+    <hr />
+
+</div>
+@if (TempData["Msg"] != null)
+{
+    var msg = (string)TempData["Msg"];
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Éxito!</strong> @msg.
+    </div>
+
+}
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.Registros.First().NombreCliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Registros.First().Ciudad)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Registros.First().Pais)
+            </th>
+
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Registros.Any())
+        {
+            foreach (var item in Model.Registros)
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(m => item.NombreCliente)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.Ciudad)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.Pais)
+            </td>
+
+            <td>
+                <a href="@Url.Action("Edit","Clientes",new{id=item.ClienteId})" class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>
+                <a href="@Url.Action("Details","Clientes",new{id=item.ClienteId})" class="btn btn-info"><i class="fas fa-list"></i> Detalle</a>
+                <a href="@Url.Action("Delete", "Clientes", new {id = item.ClienteId})" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Borrar
+                </a>
+
+            </td>
+        </tr>
+            }
+
+        }
+        else
+        {
+            <tr>
+                <td>No se agregaron Países todavía</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.Registros.Any())
+{
+    <span>
+        <strong>@Model.TotalRegistros</strong> registros encontrados
+    </span>
+    <span>&nbsp;|&nbsp;</span>
+    <span>
+        Página <strong>@(Model.PaginaActual)</strong> de
+        <strong>@Model.TotalPaginas</strong>
+    </span>
+    <span>&nbsp;|&nbsp;</span>
+}
+else
+{
+    <span>No hay resultados para esta búsqueda</span>
+    <span>&nbsp;|&nbsp;</span>
+}
+
+@if (Model.PaginaActual > 1)
+{
+    @Html.ActionLink("<<", "Index", new { pagina = 1 },
+        new { @class = "btn btn-sm btn-secondary" })
+    <span></span>
+    @Html.ActionLink("Anterior", "Index", new { pagina = Model.PaginaActual - 1 },
+        new { @class = "btn btn-sm btn-secondary" })
+}
+else
+{
+    @Html.ActionLink("<<", "Index", new { pagina = 1 },
+        new { @class = "btn btn-sm btn-secondary disabled" })
+    <span></span>
+    @Html.ActionLink("Anterior", "Index", new { pagina = 1 },
+        new { @class = "btn btn-sm btn-secondary disabled" })
+}
+<span></span>
+@if (Model.PaginaActual < Model.TotalPaginas)
+{
+    @Html.ActionLink("Siguiente", "Index", new { pagina = Model.PaginaActual + 1 },
+        new { @class = "btn btn-sm btn-secondary" })
+    <span></span>
+    @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
+        new { @class = "btn btn-sm btn-secondary" })
+}
+else
+{
+    @Html.ActionLink("Siguiente", "Index", new { pagina = Model.TotalPaginas - 1 },
+        new { @class = "btn btn-sm btn-secondary disabled" })
+    <span></span>
+    @Html.ActionLink(">>", "Index", new { pagina = Model.TotalPaginas },
+        new { @class = "btn btn-sm btn-secondary disabled" })
+}

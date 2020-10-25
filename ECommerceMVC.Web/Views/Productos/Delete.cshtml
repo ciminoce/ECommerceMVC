@@ -1,0 +1,54 @@
+﻿@model ECommerceMVC.Web.ViewModels.Producto.ProductoListViewModel
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Borrar Producto</h2>
+<hr />
+@using (Html.BeginForm("Delete", "Productos", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Categoria)
+                @Html.TextBoxFor(m => m.Categoria, new { @class = "form-control col-md-6", disabled = "disabled" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.NombreProducto)
+                @Html.TextBoxFor(m => m.NombreProducto, new { @class = "form-control col-md-6", disabled = "disabled" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.UnidadesEnExistencia)
+                @Html.TextBoxFor(m => m.UnidadesEnExistencia, new { @class = "form-control col-md-6", disabled = "disabled" })
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-danger" type="submit">Borrar</button>
+                <a href="@Url.Action("Index", "Productos")" class="btn btn-success">Volver</a>
+
+            </div>
+        </div>
+        <div class="col-md-6" style="float: right">
+            <div class="container">
+                <h2>Foto del Producto</h2>
+                
+                <div class="card" style="width:400px">
+                    <img class="card-img-top" id="imgSalida"src="@Url.Content(Model.Foto)" alt="Imagen del Producto" style="width:100%">
+                    <div class="card-body">
+                        <h4 class="card-title">
+                            @Model.NombreProducto
+                        </h4>
+                    </div>
+                </div>
+                <br>
+  
+            </div>
+
+        </div>
+    </div>
+}

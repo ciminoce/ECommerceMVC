@@ -1,0 +1,27 @@
+﻿@model ECommerceMVC.Web.ViewModels.Categoria.CategoriaEditViewModel
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Editar Categoría </h2>
+<hr />
+@using (Html.BeginForm("Edit", "Categorias", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.CategoriaId)
+    <div class="form-group">
+        @Html.LabelFor(m => m.NombreCategoria)
+        @Html.TextBoxFor(m => m.NombreCategoria, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.NombreCategoria, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-warning" type="submit"><i class="fas fa-edit"></i> Editar</button>
+        <a href="@Url.Action("Index", "Categorias")" class="btn btn-success">
+            <i class="fas fa-backspace"></i>
+            Volver
+        </a>
+
+    </div>
+}

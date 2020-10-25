@@ -1,0 +1,23 @@
+﻿@model ECommerceMVC.Web.ViewModels.Pais.PaisEditViewModel
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Nuevo País </h2>
+<hr />
+@using (Html.BeginForm("Create", "Paises", FormMethod.Post))
+{
+    @Html.ValidationSummary(true,"",new{@class="text-danger"})
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        @Html.LabelFor(m => m.NombrePais)
+        @Html.TextBoxFor(m => m.NombrePais, new { @class = "form-control",autofocus="autofocus" })
+        @Html.ValidationMessageFor(m => m.NombrePais, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a href="@Url.Action("Index","Paises")" class="btn btn-success">Volver</a>
+
+    </div>
+}

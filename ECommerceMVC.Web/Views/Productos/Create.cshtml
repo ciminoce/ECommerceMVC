@@ -1,0 +1,110 @@
+﻿@model ECommerceMVC.Web.ViewModels.Producto.ProductoEditViewModel
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Nuevo Producto</h2>
+<hr />
+@using (Html.BeginForm("Create", "Productos", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.CategoriaId)
+                @Html.DropDownListFor(m => m.CategoriaId, new SelectList(Model.Categorias, "CategoriaId", "NombreCategoria"), "Seleccione Categoría", new { @class = "form-control", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(m => m.CategoriaId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.NombreProducto)
+                @Html.TextBoxFor(m => m.NombreProducto, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.NombreProducto, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.ProveedorId)
+                @Html.DropDownListFor(m => m.ProveedorId, new SelectList(Model.Proveedores, "ProveedorId", "NombreCompania"), "Seleccione Tipo", new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ProveedorId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.PrecioUnitario)
+                @Html.TextBoxFor(m => m.PrecioUnitario, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.PrecioUnitario, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.UnidadesEnExistencia)
+                @Html.TextBoxFor(m => m.UnidadesEnExistencia, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.UnidadesEnExistencia, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Guardar</button>
+                <a href="@Url.Action("Index", "Productos")" class="btn btn-success">Volver</a>
+
+            </div>
+
+        </div>
+        <div class="col-md-6">
+
+            <div class="container">
+                <h2>Foto del Producto</h2>
+
+                <div class="card" style="width:400px">
+                    <img class="card-img-top" id="imgSalida" src="" alt="Imagen" style="width:100%">
+                    <div class="card-body">
+                        <h4 class="card-title">
+
+                            @if (Model.NombreProducto != null)
+                            {
+                                @Model.NombreProducto
+
+                            }
+                        </h4>
+                        <p class="card-text">Presione el botón para seleccionar una imagen</p>
+                        <span class="form-control-file" id="file-input">
+                            @Html.TextBoxFor(modelo => modelo.FotoFile, new { type = "file" })
+                        </span>
+                    </div>
+                </div>
+                <br>
+
+            </div>
+
+        </div>
+    </div>
+
+}
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#file-input').change(function (e) {
+                addImage(e);
+            });
+
+            function addImage(e) {
+                var file = e.target.files[0],
+                    imageType = /image.*/;
+
+                if (!file.type.match(imageType))
+                    return;
+
+                var reader = new FileReader();
+                reader.onload = fileOnload;
+                reader.readAsDataURL(file);
+            }
+
+            function fileOnload(e) {
+                var result = e.target.result;
+                $('#imgSalida').attr("src", result);
+            }
+
+        });
+
+
+    </script>
+
+}
+
+
