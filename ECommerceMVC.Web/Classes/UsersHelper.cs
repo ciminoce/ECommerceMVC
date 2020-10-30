@@ -100,6 +100,20 @@ namespace ECommerceMVC.Web.Classes
 
             await MailHelper.SendMail(email, subject, body);
         }
+        public static bool UpdateUserName(string currentUserName, string newUserName)
+        {
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(UserContext));
+            var userAsp = userManager.FindByEmail(currentUserName);
+            if (userAsp == null)
+            {
+                return false;
+            }
+
+            userAsp.UserName = newUserName;
+            userAsp.Email = newUserName;
+            var response = userManager.Update(userAsp);
+            return true;
+        }
 
         public void Dispose()
         {

@@ -31,6 +31,13 @@
                 @Html.DisplayNameFor(m => m.Registros.First().NombreCiudad)
             </th>
             <th>
+                @Html.DisplayNameFor(m => m.Registros.First().CantidadClientes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.Registros.First().CantidadProveedores)
+            </th>
+
+            <th>
 
             </th>
         </tr>
@@ -40,22 +47,29 @@
         {
             foreach (var item in Model.Registros)
             {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(m => item.NombrePais)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(m => item.NombreCiudad)
-                    </td>
-                    <td>
-                        <a href="@Url.Action("Edit","Ciudades",new{id=item.CiudadId})" class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>
-                        <a href="#" class="btn btn-info"><i class="fas fa-list"></i> Detalle</a>
-                        <a href="@Url.Action("Delete", "Ciudades", new {id = item.CiudadId})" class="btn btn-danger">
-                            <i class="fas fa-trash-alt"></i> Borrar
-                        </a>
+        <tr>
+            <td>
+                @Html.DisplayFor(m => item.NombrePais)
+            </td>
+            <td>
+                @Html.DisplayFor(m => item.NombreCiudad)
+            </td>
+            <td style="text-align: right">
+                @Html.DisplayFor(m => item.CantidadClientes)
+            </td>
+            <td style="text-align: right">
+                @Html.DisplayFor(m => item.CantidadProveedores)
+            </td>
 
-                    </td>
-                </tr>
+            <td>
+                <a href="@Url.Action("Edit","Ciudades",new{id=item.CiudadId})" class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>
+                <a href="#" class="btn btn-info"><i class="fas fa-list"></i> Detalle</a>
+                <a href="@Url.Action("Delete", "Ciudades", new {id = item.CiudadId})" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i> Borrar
+                </a>
+
+            </td>
+        </tr>
             }
 
         }

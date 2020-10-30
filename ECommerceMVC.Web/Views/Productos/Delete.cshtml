@@ -37,8 +37,17 @@
             <div class="container">
                 <h2>Foto del Producto</h2>
                 
-                <div class="card" style="width:400px">
-                    <img class="card-img-top" id="imgSalida"src="@Url.Content(Model.Foto)" alt="Imagen del Producto" style="width:100%">
+                <div class="card" style="width: 400px">
+                    @if (Model.Foto != null)
+                    {
+                        <img class="card-img-top" id="imgSalida" src="@Url.Content(Model.Foto)" alt="Imagen del Producto" style="width: 100%">
+
+                    }
+                    else
+                    {
+                        <img class="card-img-top" id="imgSalida" src="@Url.Content("~/Content/Images/Productos/SinImagenDisponible.jpg")" alt="Imagen del Producto" style="width: 100%">
+
+                    }
                     <div class="card-body">
                         <h4 class="card-title">
                             @Model.NombreProducto

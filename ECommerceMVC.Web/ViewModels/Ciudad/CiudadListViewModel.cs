@@ -13,5 +13,11 @@ namespace ECommerceMVC.Web.ViewModels.Ciudad
         [Display(Name = @"País")]
         public string NombrePais { get; set; }
 
+        [Display(Name = "Proveedores")]
+        public int CantidadProveedores { get; set; }
+
+        [Display(Name = "Clientes")]
+
+        public int CantidadClientes { get; set; }
     }
 }

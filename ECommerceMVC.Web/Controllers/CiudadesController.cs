@@ -9,8 +9,6 @@ using ECommerceMVC.Web.Context;
 using ECommerceMVC.Web.Models;
 using ECommerceMVC.Web.ViewModels;
 using ECommerceMVC.Web.ViewModels.Ciudad;
-using ECommerceMVC.Web.ViewModels.Ciudad;
-using ECommerceMVC.Web.ViewModels.Pais;
 
 namespace ECommerceMVC.Web.Controllers
 {
@@ -36,8 +34,18 @@ namespace ECommerceMVC.Web.Controllers
                 .Skip((pagina - 1) * _registrosPorPagina)
                 .Take(_registrosPorPagina)
                 .ToList();
-            var paisesVm = Mapper
+
+            var ciudadVm = Mapper
                 .Map<List<Ciudad>, List<CiudadListViewModel>>(ciudades);
+
+            ciudadVm.ForEach(c =>
+            {
+                c.CantidadClientes = _dbContext
+                    .Clientes.Count(cl => cl.CiudadId == c.CiudadId);
+                c.CantidadProveedores = _dbContext
+                    .Proveedores.Count(p => p.CiudadId == c.CiudadId);
+            });
+
             var totalPaginas = (int)Math.Ceiling((double)totalRegistros / _registrosPorPagina);
             _listador = new Listador<CiudadListViewModel>()
             {
@@ -45,7 +53,7 @@ namespace ECommerceMVC.Web.Controllers
                 TotalPaginas = totalPaginas,
                 TotalRegistros = totalRegistros,
                 PaginaActual = pagina,
-                Registros = paisesVm
+                Registros = ciudadVm
             };
 
 

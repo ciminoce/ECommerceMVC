@@ -18,7 +18,8 @@ namespace ECommerceMVC.Web
 
 
             CreateMap<Ciudad, CiudadListViewModel>()
-                .ForMember(dest=>dest.NombrePais,c=>c.MapFrom(s=>s.Pais.NombrePais));
+                .ForMember(dest => dest.NombrePais, c => c.MapFrom(s => s.Pais.NombrePais));
+                
             CreateMap<Ciudad, CiudadEditViewModel>();
             CreateMap<CiudadEditViewModel, Ciudad>();
 
