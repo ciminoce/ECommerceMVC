@@ -1,0 +1,93 @@
+﻿@using PagedList.Mvc;
+@model PagedList.IPagedList<ECommerceMVC.Web.ViewModels.Venta.VentaListViewModel>
+@{
+    ViewBag.Title = "Index";
+}
+<div>
+    <a href="@Url.Action("Create", "Ventas")" class="btn btn-primary" style="float: right">
+        <i class="far fa-file-alt"></i>
+        Nuevo
+    </a>
+    <h2>Lista de Ventas</h2>
+    <hr />
+
+</div>
+@if (TempData["Msg"] != null)
+{
+    var msg = (string)TempData["Msg"];
+    <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>Éxito!</strong> @msg.
+    </div>
+
+}
+
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.First().VentaId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.First().Cliente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.First().FechaVenta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.First().FechaEntrega)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.First().Estado)
+            </th>
+
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.VentaId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Cliente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.FechaVenta)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.FechaEntrega)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Estado)
+                    </td>
+
+                    <td>
+                        <a href="@Url.Action("Details","Ventas",new{id=item.VentaId})" class="btn btn-info"><i class="fas fa-list"></i> Detalle</a>
+
+                    </td>
+                </tr>
+            }
+
+        }
+        else
+        {
+            <tr>
+                <td>No se agregaron Países todavía</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+Página: @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber), de: @Model.PageCount
+@Html.PagedListPager(Model, page => Url.Action("Index", new
+{
+    page
+}))
+

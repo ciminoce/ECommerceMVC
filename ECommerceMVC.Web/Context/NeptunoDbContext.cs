@@ -22,7 +22,9 @@ namespace ECommerceMVC.Web.Context
             modelBuilder.Entity<Cliente>().ToTable("Clientes");
             modelBuilder.Entity<Proveedor>().ToTable("Proveedores");
             modelBuilder.Entity<Producto>().ToTable("Productos");
-
+            modelBuilder.Entity<Venta>().ToTable("Ventas");
+            modelBuilder.Entity<DetalleVenta>().ToTable("DetalleVentas");
+            modelBuilder.Entity<Estado>().ToTable("Estados");
         }
 
         public DbSet<Pais> Paises { get; set; }
@@ -31,6 +33,8 @@ namespace ECommerceMVC.Web.Context
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }
         public DbSet<Producto> Productos { get; set; }
-
+        public DbSet<Venta> Ventas { get; set; }
+        public DbSet<DetalleVenta> DetalleVentas { get; set; }
+        public DbSet<Estado> Estados { get; set; }
     }
 }

@@ -1,0 +1,70 @@
+﻿@using System.Net.Configuration
+@model ECommerceMVC.Web.ViewModels.Venta.VentaDetailsViewModel
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Detalles de Venta</h2>
+<div class="row">
+    <div class="col-md-4">
+        <div class="form-group">
+            @Html.LabelFor(m => m.VentaId)
+            @Html.TextBoxFor(m => m.VentaId, new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Cliente)
+            @Html.TextBoxFor(m => m.Cliente, new { @class = "form-control", @readonly = true })
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            @Html.LabelFor(m => m.FechaVenta)
+            @Html.TextBoxFor(m => m.FechaVenta, "{0:dd/MM/yyyy}", new { @class = "form-control", @readonly = true })
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.FechaEntrega)
+            @Html.TextBoxFor(m => m.FechaEntrega, "{0:dd/MM/yyyy}", new { @class = "form-control", @readonly = true })
+        </div>
+
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            @Html.LabelFor(m => m.Estado)
+            @Html.TextBoxFor(m => m.Estado, new { @class = "form-control", @readonly = true })
+        </div>
+        <a href="@Url.Action("Index", "Ventas")" class="btn btn-success">Volver</a>
+
+    </div>
+
+</div>
+<h2>Detalles</h2>
+<hr/>
+<table class="table">
+    <thead>
+    <tr>
+        <th>@Html.DisplayNameFor(m=>m.Detalles.First().Producto)</th>
+        <th>@Html.DisplayNameFor(m=>m.Detalles.First().PrecioUnitario)</th>
+        <th>@Html.DisplayNameFor(m=>m.Detalles.First().Cantidad)</th>
+        <th>@Html.DisplayNameFor(m=>m.Detalles.First().Total)</th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Detalles)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(m=>item.Producto)
+                </td>
+                <td style="text-align: right">@Html.DisplayFor(m=>item.PrecioUnitario)</td>
+                <td style="text-align: right">@Html.DisplayFor(m=>item.Cantidad)</td>
+                <td style="text-align: right">@Html.DisplayFor(m=>item.Total)</td>
+            </tr>
+        }
+    <tr >
+        <td colspan="3"><strong>Total</strong></td>
+        <td style="text-align: right"><strong>@Model.Detalles.Sum(dt => dt.Total).ToString("C")</strong>  </td>
+    </tr>
+    </tbody>
+</table>
+

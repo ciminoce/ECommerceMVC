@@ -3,8 +3,10 @@ using ECommerceMVC.Web.Models;
 using ECommerceMVC.Web.ViewModels.Categoria;
 using ECommerceMVC.Web.ViewModels.Ciudad;
 using ECommerceMVC.Web.ViewModels.Cliente;
+using ECommerceMVC.Web.ViewModels.DetalleVenta;
 using ECommerceMVC.Web.ViewModels.Pais;
 using ECommerceMVC.Web.ViewModels.Producto;
+using ECommerceMVC.Web.ViewModels.Venta;
 
 namespace ECommerceMVC.Web
 {
@@ -38,6 +40,15 @@ namespace ECommerceMVC.Web
             CreateMap<Producto, ProductoEditViewModel>();
             CreateMap<ProductoEditViewModel,Producto>();
 
+            CreateMap<Venta, VentaListViewModel>()
+                .ForMember(dest => dest.Cliente, c => c.MapFrom(s => s.Cliente.NombreCliente))
+                .ForMember(dest => dest.Estado, c => c.MapFrom(s => s.Estado.Descripcion));
+            CreateMap<Venta, VentaDetailsViewModel>()
+                .ForMember(dest => dest.Cliente, c => c.MapFrom(s => s.Cliente.NombreCliente))
+                .ForMember(dest => dest.Estado, c => c.MapFrom(s => s.Estado.Descripcion));
+
+            CreateMap<DetalleVenta, DetalleVentaListViewModel>()
+                .ForMember(dest => dest.Producto, c => c.MapFrom(s => s.Producto.NombreProducto));
 
         }
 

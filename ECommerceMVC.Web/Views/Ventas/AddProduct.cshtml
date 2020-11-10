@@ -1,0 +1,87 @@
+﻿@model ECommerceMVC.Web.ViewModels.Venta.AddProductViewModel
+@{
+    ViewBag.Title = "AddProduct";
+}
+
+<h2>Agregar Producto</h2>
+@using (Html.BeginForm("AddProduct", "Ventas", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.LabelFor(m => m.CategoriaId)
+        @Html.DropDownListFor(m => m.CategoriaId, new SelectList(Model.Categorias, "CategoriaId", "NombreCategoria"), "Seleccione Categoría", new { @class = "form-control", autofocus = "autofocus" })
+        @Html.ValidationMessageFor(m => m.CategoriaId, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ProductoId)
+        @Html.DropDownListFor(m => m.ProductoId, new SelectList(Model.Productos, "ProductoId", "NombreProducto"), "Seleccione Producto", new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.ProductoId, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.PrecioUnitario)
+        @Html.TextBoxFor(m => m.PrecioUnitario, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.PrecioUnitario, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Cantidad)
+        @Html.TextBoxFor(m => m.Cantidad, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Cantidad, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="form-group">
+        <a href="@Url.Action("Create", "Ventas")" class="btn btn-success">Volver</a>
+        <button class="btn btn-warning" type="submit">Agregar</button>
+
+    </div>
+
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#CategoriaId").change(function() {
+                $("#ProductoId").empty();
+                $("#ProductoId").append('<option value="0">[Seleccione Producto...]</option>');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetProductos")',
+                    dataType: 'json',
+                    data: { categoriaId: $("#CategoriaId").val() },
+                    success: function(productos) {
+                        $.each(productos,
+                            function(i, producto) {
+                                $("#ProductoId").append('<option value="' +
+                                    producto.ProductoId +
+                                    '">' +
+                                    producto.NombreProducto +
+                                    '</option>');
+                            });
+                    },
+                    error: function(ex) {
+                        alert('Failed to retrieve products.' + ex);
+                    }
+                });
+                return false;
+            });
+            $("#ProductoId").change(function() {
+                $("#precioProducto").empty();
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GetProducto")',
+                    datatype: 'json',
+                    data: { productoSeleccionadoId: $("#ProductoId").val() },
+                    success: function (producto) {
+                        console.log(producto);
+                        $("#precioProducto").val(producto.PrecioUnitario);
+                    },
+                    error: function(ex){
+                    alert('Error al intentar leer un producto'+ ex);
+            }
+        });
+        return false;
+            });
+        });
+    </script>
+}
+

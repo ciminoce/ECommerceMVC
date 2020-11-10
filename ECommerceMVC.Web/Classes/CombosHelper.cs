@@ -65,5 +65,33 @@ namespace ECommerceMVC.Web.Classes
             lista.Insert(0, defaultProveedor);
             return lista;
         }
+
+        public static List<Cliente> GetClientes()
+        {
+            var defaultCliente = new Cliente
+            {
+                ClienteId = 0,
+                NombreCliente = "[Seleccione Cliente]"
+            };
+            var lista = Db.Clientes
+                .OrderBy(c => c.NombreCliente).ToList();
+            lista.Insert(0, defaultCliente);
+            return lista;
+        }
+
+        public static List<Producto> GetProductos(int i)
+        {
+            var defaultProducto = new Producto
+            {
+                ProductoId = 0,
+                NombreProducto = "[Seleccione Producto]"
+            };
+            var listaProductos = Db.Productos
+                .Where(p=>p.CategoriaId==i)
+                .OrderBy(p => p.NombreProducto).ToList();
+            listaProductos.Insert(0, defaultProducto);
+            return listaProductos;
+
+        }
     }
 }

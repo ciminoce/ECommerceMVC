@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://kit.fontawesome.com/766389a881.js" crossorigin="anonymous"></script>
-
+<link href="~/Content/PagedList.css" rel="stylesheet" />
     <title>@ViewBag.Title - Mi aplicación ASP.NET</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
@@ -51,6 +51,21 @@
                         </div>
 
                     </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item active dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Movimientos
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="@Url.Action("Index","Ventas")">Ventas</a>
+                                <a class="dropdown-item" href="@Url.Action("Index","Ventas")">Ventas desde Órdenes</a>
+
+                            </div>
+
+                        </li>
+
+                    }
                     @Html.Partial("_LoginPartial")
 
                 </ul>
