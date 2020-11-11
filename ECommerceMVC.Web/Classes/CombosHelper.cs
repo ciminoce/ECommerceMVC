@@ -93,5 +93,10 @@ namespace ECommerceMVC.Web.Classes
             return listaProductos;
 
         }
+
+        public static int GetEstado(string estado)
+        {
+            return Db.Estados.SingleOrDefault(e => e.Descripcion == estado).EstadoId;
+        }
     }
 }

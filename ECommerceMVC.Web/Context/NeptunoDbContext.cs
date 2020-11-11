@@ -25,6 +25,7 @@ namespace ECommerceMVC.Web.Context
             modelBuilder.Entity<Venta>().ToTable("Ventas");
             modelBuilder.Entity<DetalleVenta>().ToTable("DetalleVentas");
             modelBuilder.Entity<Estado>().ToTable("Estados");
+            modelBuilder.Entity<DetalleVentaTmp>().ToTable("DetalleVentasTmp");
         }
 
         public DbSet<Pais> Paises { get; set; }
@@ -36,5 +37,6 @@ namespace ECommerceMVC.Web.Context
         public DbSet<Venta> Ventas { get; set; }
         public DbSet<DetalleVenta> DetalleVentas { get; set; }
         public DbSet<Estado> Estados { get; set; }
+        public DbSet<DetalleVentaTmp> DetalleVentasTmp { get; set; }
     }
 }

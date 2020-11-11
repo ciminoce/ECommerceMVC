@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ECommerceMVC.Web.ViewModels.DetalleVenta;
 
 namespace ECommerceMVC.Web.ViewModels.Venta
 {
@@ -20,5 +21,6 @@ namespace ECommerceMVC.Web.ViewModels.Venta
         public DateTime? FechaEntrega { get; set; }
 
         public List<Models.Cliente> Clientes { get; set; }
+        public List<DetalleVentaListViewModel> DetallesVenta { get; set; }=new List<DetalleVentaListViewModel>();
     }
 }

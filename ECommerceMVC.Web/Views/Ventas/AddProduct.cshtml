@@ -64,7 +64,7 @@
                 return false;
             });
             $("#ProductoId").change(function() {
-                $("#precioProducto").empty();
+                $("#PrecioUnitario").empty();
 
                 $.ajax({
                     type: 'POST',
@@ -73,7 +73,7 @@
                     data: { productoSeleccionadoId: $("#ProductoId").val() },
                     success: function (producto) {
                         console.log(producto);
-                        $("#precioProducto").val(producto.PrecioUnitario);
+                        $("#PrecioUnitario").val(producto.PrecioUnitario);
                     },
                     error: function(ex){
                     alert('Error al intentar leer un producto'+ ex);

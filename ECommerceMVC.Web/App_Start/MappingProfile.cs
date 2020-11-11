@@ -46,9 +46,14 @@ namespace ECommerceMVC.Web
             CreateMap<Venta, VentaDetailsViewModel>()
                 .ForMember(dest => dest.Cliente, c => c.MapFrom(s => s.Cliente.NombreCliente))
                 .ForMember(dest => dest.Estado, c => c.MapFrom(s => s.Estado.Descripcion));
+            CreateMap<VentaEditViewModel, Venta>();
 
             CreateMap<DetalleVenta, DetalleVentaListViewModel>()
                 .ForMember(dest => dest.Producto, c => c.MapFrom(s => s.Producto.NombreProducto));
+
+            CreateMap<DetalleVentaTmp, DetalleVentaListViewModel>()
+                .ForMember(dest => dest.Producto, c => c.MapFrom(s => s.Producto.NombreProducto));
+            CreateMap<DetalleVentaTmp, DetalleVenta>();
 
         }
 

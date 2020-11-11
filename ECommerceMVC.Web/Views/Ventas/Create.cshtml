@@ -6,11 +6,14 @@
 <h2>Nueva Venta</h2>
 @using (Html.BeginForm("Create", "Ventas", FormMethod.Post))
 {
+    @Html.ValidationSummary(true,"",new{@class="text-danger"})
+    @Html.AntiForgeryToken()
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
                 @Html.LabelFor(m => m.ClienteId)
                 @Html.DropDownListFor(m => m.ClienteId, new SelectList(Model.Clientes, "ClienteId", "NombreCliente"), "Seleccione Cliente", new { @class = "form-control", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(m => m.ClienteId, "", new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <a href="@Url.Action("Index", "Ventas")" class="btn btn-success">Volver</a>
@@ -38,16 +41,17 @@
     <h2>Detalles</h2>
     <hr/>
     <table class="table">
-        @*<thead>
+        <thead>
         <tr>
-            <th>@Html.DisplayNameFor(m=>m.Detalles.First().Producto)</th>
-            <th>@Html.DisplayNameFor(m=>m.Detalles.First().PrecioUnitario)</th>
-            <th>@Html.DisplayNameFor(m=>m.Detalles.First().Cantidad)</th>
-            <th>@Html.DisplayNameFor(m=>m.Detalles.First().Total)</th>
+            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().Producto)</th>
+            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().PrecioUnitario)</th>
+            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().Cantidad)</th>
+            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().Total)</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model.Detalles)
+        @foreach (var item in Model.DetallesVenta)
         {
             <tr>
                 <td>
@@ -56,13 +60,15 @@
                 <td style="text-align: right">@Html.DisplayFor(m=>item.PrecioUnitario)</td>
                 <td style="text-align: right">@Html.DisplayFor(m=>item.Cantidad)</td>
                 <td style="text-align: right">@Html.DisplayFor(m=>item.Total)</td>
+                <td> <a href="@Url.Action("DeleteProduct","Ventas")" class="btn btn-danger">Borrar</a>
+                </td>
             </tr>
         }
         <tr >
             <td colspan="3"><strong>Total</strong></td>
-            <td style="text-align: right"><strong>@Model.Detalles.Sum(dt => dt.Total).ToString("C")</strong>  </td>
+            <td style="text-align: right"><strong>@Model.DetallesVenta.Sum(dt => dt.Total).ToString("C")</strong>  </td>
         </tr>
-        </tbody>*@
+        </tbody>
     </table>
 
 }
