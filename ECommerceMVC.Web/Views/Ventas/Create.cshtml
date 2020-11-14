@@ -2,11 +2,12 @@
 @{
     ViewBag.Title = "Create";
 }
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
 
 <h2>Nueva Venta</h2>
 @using (Html.BeginForm("Create", "Ventas", FormMethod.Post))
 {
-    @Html.ValidationSummary(true,"",new{@class="text-danger"})
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     @Html.AntiForgeryToken()
     <div class="row">
         <div class="col-md-6">
@@ -39,37 +40,80 @@
 
     </div>
     <h2>Detalles</h2>
-    <hr/>
+    <hr />
     <table class="table">
         <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().Producto)</th>
-            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().PrecioUnitario)</th>
-            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().Cantidad)</th>
-            <th>@Html.DisplayNameFor(m=>m.DetallesVenta.First().Total)</th>
-            <th></th>
-        </tr>
+            <tr>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().Producto)</th>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().PrecioUnitario)</th>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().Cantidad)</th>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().Total)</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody>
-        @foreach (var item in Model.DetallesVenta)
-        {
+            @foreach (var item in Model.DetallesVenta)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.Producto)
+                    </td>
+                    <td style="text-align: right">@Html.DisplayFor(m => item.PrecioUnitario)</td>
+                    <td style="text-align: right">@Html.DisplayFor(m => item.Cantidad)</td>
+                    <td style="text-align: right">@Html.DisplayFor(m => item.Total)</td>
+                    <td>
+                        <a onclick="getId(@item.DetalleVentaId)" href="#" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">Borrar</a>
+                    </td>
+                </tr>
+            }
             <tr>
-                <td>
-                    @Html.DisplayFor(m=>item.Producto)
-                </td>
-                <td style="text-align: right">@Html.DisplayFor(m=>item.PrecioUnitario)</td>
-                <td style="text-align: right">@Html.DisplayFor(m=>item.Cantidad)</td>
-                <td style="text-align: right">@Html.DisplayFor(m=>item.Total)</td>
-                <td> <a href="@Url.Action("DeleteProduct","Ventas")" class="btn btn-danger">Borrar</a>
-                </td>
+                <td colspan="3"><strong>Total</strong></td>
+                <td style="text-align: right"><strong>@Model.DetallesVenta.Sum(dt => dt.Total).ToString("C")</strong>  </td>
             </tr>
-        }
-        <tr >
-            <td colspan="3"><strong>Total</strong></td>
-            <td style="text-align: right"><strong>@Model.DetallesVenta.Sum(dt => dt.Total).ToString("C")</strong>  </td>
-        </tr>
         </tbody>
     </table>
 
 }
 
+<input type="hidden" id="idItemVenta" value="" />
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar Borrado de Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro que desea borrar el item seleccionado?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" onclick="deleteItem()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+{
+
+    <script>
+
+        function getId(id) {
+            $("#idItemVenta").val(id);
+        };
+        function deleteItem() {
+            var url = '@Url.Action("DeleteProduct","Ventas")';
+            url = url + '/' + $("#idItemVenta").val();
+            window.location.href = url;
+        };
+        $(document).ready(function () {
+            $("#FechaVenta").datepicker();
+
+        });
+
+    </script>
+}

@@ -6,6 +6,8 @@
 <h2>Agregar Producto</h2>
 @using (Html.BeginForm("AddProduct", "Ventas", FormMethod.Post))
 {
+    @Html.ValidationSummary(true,"",new{@class="text-danger"})
+    @Html.AntiForgeryToken()
     <div class="form-group">
         @Html.LabelFor(m => m.CategoriaId)
         @Html.DropDownListFor(m => m.CategoriaId, new SelectList(Model.Categorias, "CategoriaId", "NombreCategoria"), "Seleccione Categoría", new { @class = "form-control", autofocus = "autofocus" })
@@ -21,11 +23,23 @@
         @Html.TextBoxFor(m => m.PrecioUnitario, new { @class = "form-control" })
         @Html.ValidationMessageFor(m => m.PrecioUnitario, "", new { @class = "text-danger" })
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Cantidad)
-        @Html.TextBoxFor(m => m.Cantidad, new { @class = "form-control" })
-        @Html.ValidationMessageFor(m => m.Cantidad, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Stock</label>
+                <input type="text" class="form-control" id="stock" value="@ViewBag.Stock">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Cantidad)
+                @Html.TextBoxFor(m => m.Cantidad, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Cantidad, "", new { @class = "text-danger" })
+            </div>
+
+        </div>
     </div>
+
 
     <div class="form-group">
         <a href="@Url.Action("Create", "Ventas")" class="btn btn-success">Volver</a>
@@ -74,6 +88,8 @@
                     success: function (producto) {
                         console.log(producto);
                         $("#PrecioUnitario").val(producto.PrecioUnitario);
+                        $("#stock").val(producto.UnidadesEnExistencia);
+
                     },
                     error: function(ex){
                     alert('Error al intentar leer un producto'+ ex);

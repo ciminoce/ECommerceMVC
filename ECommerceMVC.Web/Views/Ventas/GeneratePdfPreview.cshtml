@@ -1,0 +1,72 @@
+﻿@model ECommerceMVC.Web.ViewModels.Venta.VentaDetailsViewModel
+@{ ViewBag.Title = "Sell GeneratePdfPreview";
+    Layout = null; }
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Sell GeneratePdf</title>
+
+    <link href="~/Content/Style.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+</head>
+<body style="width: 21cm; height: 30cm; margin-left: 40px; background-color: white">
+    <h2 align="center">MKS Company</h2>
+    <p align="center">
+        Address: 166/168, College road, Chawkbazar, Chittagong.
+        <br />
+        Cell: 01822-514977
+    </p>
+    <hr />
+    <div>
+        <table>
+            <tr>
+                <td>Venta No:</td>
+                <td style="font-weight: bold">: @Model.VentaId</td>
+            </tr>
+
+            <tr>
+                <td>Cliente:</td>
+                <td style="font-weight: bold">: @Model.Cliente</td>
+            </tr>
+            <tr>
+                <td>Fecha Vta:</td>
+                <td style="font-weight: bold">: @Model.FechaVenta.ToLongDateString()</td>
+            </tr>
+            <tr>
+                <td>Fecha Entrega:</td>
+                <td style="font-weight: bold">: @Model.FechaEntrega.ToString())</td>
+            </tr>
+        </table>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var sellItem in Model.Detalles)
+                {
+    <tr>
+        <td>@sellItem.Producto</td>
+        <td>@sellItem.Cantidad</td>
+        <td>@sellItem.PrecioUnitario.ToString("C")</td>
+        <td>@sellItem.Total.ToString("C")</td>
+    </tr>}
+
+            </tbody>
+        </table>
+        <p> Total:<b>@Model.Detalles.Sum(d => d.Total).ToString("C")</b></p>
+        <br />
+        <br />
+        <h6 style="text-align: right">Fecha:@DateTime.Now</h6>
+        ______________________<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Firma
+    </div>
+</body>
+</html>

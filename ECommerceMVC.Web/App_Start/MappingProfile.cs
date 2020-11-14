@@ -6,6 +6,7 @@ using ECommerceMVC.Web.ViewModels.Cliente;
 using ECommerceMVC.Web.ViewModels.DetalleVenta;
 using ECommerceMVC.Web.ViewModels.Pais;
 using ECommerceMVC.Web.ViewModels.Producto;
+using ECommerceMVC.Web.ViewModels.Proveedor;
 using ECommerceMVC.Web.ViewModels.Venta;
 
 namespace ECommerceMVC.Web
@@ -28,12 +29,19 @@ namespace ECommerceMVC.Web
             CreateMap<Categoria, CategoriaEditViewModel>();
             CreateMap<Categoria, CategoriaListViewModel>();
             CreateMap<CategoriaEditViewModel, Categoria>();
+            CreateMap<Categoria, CategoriaDetailsViewModel>();
 
             CreateMap<Cliente, ClienteListViewModel>()
                 .ForMember(dest => dest.Pais, c => c.MapFrom(s => s.Pais.NombrePais))
                 .ForMember(dest => dest.Ciudad, c => c.MapFrom(s => s.Ciudad.NombreCiudad));
             CreateMap<Cliente, ClienteEditViewModel>();
             CreateMap<ClienteEditViewModel,Cliente>();
+
+            CreateMap<Proveedor, ProveedorListViewModel>()
+                .ForMember(dest => dest.Pais, c => c.MapFrom(s => s.Pais.NombrePais))
+                .ForMember(dest => dest.Ciudad, c => c.MapFrom(s => s.Ciudad.NombreCiudad));
+            CreateMap<Proveedor, ProveedorEditViewModel>();
+            CreateMap<ProveedorEditViewModel, Proveedor>();
 
             CreateMap<Producto, ProductoListViewModel>()
                 .ForMember(dest => dest.Categoria, c => c.MapFrom(s => s.Categoria.NombreCategoria));
@@ -52,6 +60,7 @@ namespace ECommerceMVC.Web
                 .ForMember(dest => dest.Producto, c => c.MapFrom(s => s.Producto.NombreProducto));
 
             CreateMap<DetalleVentaTmp, DetalleVentaListViewModel>()
+                .ForMember(dest=>dest.DetalleVentaId,c=>c.MapFrom(s=>s.DetalleVentaTmpId))
                 .ForMember(dest => dest.Producto, c => c.MapFrom(s => s.Producto.NombreProducto));
             CreateMap<DetalleVentaTmp, DetalleVenta>();
 

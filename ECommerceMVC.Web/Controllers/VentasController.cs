@@ -22,6 +22,7 @@ namespace ECommerceMVC.Web.Controllers
         {
             _dbContext = new NeptunoDbContext();
         }
+
         // GET: Ventas
         public ActionResult Index(int? page = null)
         {
@@ -44,6 +45,7 @@ namespace ECommerceMVC.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Venta venta = _dbContext.Ventas
                 .Include(v => v.Cliente)
                 .Include(v => v.Estado)
@@ -74,7 +76,8 @@ namespace ECommerceMVC.Web.Controllers
                 .ToList();
             ventaVm.DetallesVenta = Mapper
                 .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detallesTmp);
-            return View(ventaVm);
+            //return View(ventaVm);
+            return View("Create2", ventaVm);
         }
 
         [HttpPost]
@@ -90,7 +93,8 @@ namespace ECommerceMVC.Web.Controllers
                 ventaVm.DetallesVenta = Mapper
                     .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detallesTmp);
 
-                return View(ventaVm);
+                //return View(ventaVm);
+                return View("Create2", ventaVm);
             }
 
             var cantidadItems = _dbContext.DetalleVentasTmp.Count();
@@ -104,7 +108,8 @@ namespace ECommerceMVC.Web.Controllers
                 ventaVm.DetallesVenta = Mapper
                     .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detallesTmp);
 
-                return View(ventaVm);
+                //return View(ventaVm);
+                return View("Create2", ventaVm);
 
             }
 
@@ -123,28 +128,33 @@ namespace ECommerceMVC.Web.Controllers
                         //Creo el detalle venta
                         DetalleVenta detalle = Mapper
                             .Map<DetalleVentaTmp, DetalleVenta>(detalleVentaTmp);
-                        detalle.VentaId = venta.VentaId;//le asigno el nro de venta
-                        _dbContext.DetalleVentas.Add(detalle);//guardo el detalle
+                        detalle.VentaId = venta.VentaId; //le asigno el nro de venta
+                        _dbContext.DetalleVentas.Add(detalle); //guardo el detalle
                         //Busco el producto para modificar su stock
                         var productoInDb = _dbContext
                             .Productos.SingleOrDefault(p => p.ProductoId == detalle.ProductoId);
                         productoInDb.UnidadesEnExistencia -= detalle.Cantidad;
-                        _dbContext.Entry(productoInDb).State = EntityState.Modified;//cambio el estado de la entidad
-                        _dbContext.DetalleVentasTmp.Remove(detalleVentaTmp);//borro el detalle temporal
+                        _dbContext.Entry(productoInDb).State = EntityState.Modified; //cambio el estado de la entidad
+                        _dbContext.DetalleVentasTmp.Remove(detalleVentaTmp); //borro el detalle temporal
                     }
 
                     _dbContext.SaveChanges();
                     tran.Commit();
-                    TempData["Msg"] = "Venta guardada";
-                    return RedirectToAction("Index");
+                    //TempData["Msg"] = "Venta guardada";
+                    //return RedirectToAction("Index");
+                    ViewBag.VentaId = venta.VentaId;
+                    return View("SuccessfullySave");
                 }
                 catch (Exception e)
                 {
                     ModelState.AddModelError(string.Empty, "Error al intentar guardar la venta");
-                    return View(ventaVm);
+                    //return View(ventaVm);
+                    return View("Create2", ventaVm);
+
                 }
             }
         }
+
         public ActionResult AddProduct()
         {
             AddProductViewModel producto = new AddProductViewModel
@@ -160,42 +170,57 @@ namespace ECommerceMVC.Web.Controllers
         {
             if (!ModelState.IsValid)
             {
+                addProduct.Categorias = CombosHelper.GetCategorias();
+                addProduct.Productos = CombosHelper.GetProductos(addProduct.CategoriaId);
                 return View(addProduct);
             }
+
+            var pr = _dbContext.Productos
+                .SingleOrDefault(p => p.ProductoId == addProduct.ProductoId);
+            if (pr.UnidadesEnExistencia < addProduct.Cantidad)
+            {
+                ModelState.AddModelError(string.Empty, "Stock insuficiente");
+                addProduct.Categorias = CombosHelper.GetCategorias();
+                addProduct.Productos = CombosHelper.GetProductos(addProduct.CategoriaId);
+                ViewBag.Stock = pr.UnidadesEnExistencia;
+                return View(addProduct);
+            }
+
             try
             {
-                //Veo si tengo un producto en el archivo temp con el mismo Id
-                DetalleVentaTmp detalleTmp = _dbContext
-                    .DetalleVentasTmp
+                DetalleVentaTmp detalleTmp = _dbContext.DetalleVentasTmp
                     .SingleOrDefault(dvt => dvt.ProductoId == addProduct.ProductoId);
-                //Veo si el producto es null, si es null quiere decir que no hay repetido
                 if (detalleTmp == null)
                 {
-                    //Creo el detalle y le paso los datos
                     detalleTmp = new DetalleVentaTmp
                     {
                         ProductoId = addProduct.ProductoId,
                         PrecioUnitario = addProduct.PrecioUnitario,
                         Cantidad = addProduct.Cantidad
                     };
-                     _dbContext.DetalleVentasTmp.Add(detalleTmp);
+                    _dbContext.DetalleVentasTmp.Add(detalleTmp);
 
                 }
                 else
                 {
-                    //Actualizo la cantidad de productos que vendo
                     detalleTmp.Cantidad += addProduct.Cantidad;
                     _dbContext.Entry(detalleTmp).State = EntityState.Modified;
                 }
+
                 _dbContext.SaveChanges();
                 return RedirectToAction("Create");
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error al intentar guardar un item temporal");
+                ModelState.AddModelError(string.Empty, "Error al intentar guardar un item de vta");
+                addProduct.Categorias = CombosHelper.GetCategorias();
+                addProduct.Productos = CombosHelper.GetProductos(addProduct.CategoriaId);
+                ViewBag.Stock = pr.UnidadesEnExistencia;
+
                 return View(addProduct);
             }
         }
+
         public JsonResult GetProducto(int productoSeleccionadoId)
         {
             _dbContext.Configuration.ProxyCreationEnabled = true;
@@ -210,6 +235,155 @@ namespace ECommerceMVC.Web.Controllers
             var productos = _dbContext.Productos
                 .Where(p => p.CategoriaId == categoriaId).ToList();
             return Json(productos, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult DeleteProduct(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var item = _dbContext.DetalleVentasTmp
+                .SingleOrDefault(dvt => dvt.DetalleVentaTmpId == id);
+            if (item == null)
+            {
+                return HttpNotFound();
+            }
+
+            try
+            {
+                _dbContext.DetalleVentasTmp.Remove(item);
+                _dbContext.SaveChanges();
+                TempData["Msg"] = "Item borrado";
+                return RedirectToAction("Create");
+            }
+            catch (Exception e)
+            {
+                TempData["Msg"] = "Error al intentar borrar un item del temporal";
+                return RedirectToAction("Create");
+            }
+        }
+
+        public ActionResult GeneratePdf(int id)
+        {
+            return new Rotativa.ActionAsPdf("GeneratePdfPreview", new { VentaId = id });
+        }
+
+        public ActionResult GeneratePdfPreview(int VentaId)
+        {
+            var venta = _dbContext.Ventas
+                .Include(v => v.Cliente)
+                .SingleOrDefault(v => v.VentaId == VentaId);
+            var ventaVm = Mapper.Map<Venta, VentaDetailsViewModel>(venta);
+            var detalles = _dbContext.DetalleVentas
+                .Include(dv => dv.Producto)
+                .Where(dv => dv.VentaId == VentaId).ToList();
+            ventaVm.Detalles = Mapper
+                .Map<List<DetalleVenta>, List<DetalleVentaListViewModel>>(detalles);
+
+            return View(ventaVm);
+
+        }
+
+        public ActionResult Up(int id)
+        {
+            var detalleTmp = _dbContext.DetalleVentasTmp
+                .SingleOrDefault(dvt => dvt.DetalleVentaTmpId == id);
+            var producto = _dbContext.Productos
+                .SingleOrDefault(p => p.ProductoId == detalleTmp.ProductoId);
+            VentaEditViewModel ventaVm = new VentaEditViewModel
+            {
+                Clientes = CombosHelper.GetClientes()
+            };
+            if (producto.UnidadesEnExistencia < detalleTmp.Cantidad + 1)
+            {
+
+                var detalles = _dbContext.DetalleVentasTmp
+                    .Include(dvt => dvt.Producto)
+                    .ToList();
+                ventaVm.DetallesVenta = Mapper
+                    .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detalles);
+                ModelState.AddModelError(string.Empty, "Stock insuficiente");
+
+                return RedirectToAction("Create", ventaVm);
+            }
+
+            try
+            {
+                detalleTmp.Cantidad++;
+                _dbContext.Entry(detalleTmp).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+                var detalles = _dbContext.DetalleVentasTmp
+                    .Include(dvt => dvt.Producto)
+                    .ToList();
+                ventaVm.DetallesVenta = Mapper
+                    .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detalles);
+
+                return RedirectToAction("Create");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "Error al intentar guardar un item de vta");
+                var detalles = _dbContext.DetalleVentasTmp
+                    .Include(dvt => dvt.Producto)
+                    .ToList();
+                ventaVm.DetallesVenta = Mapper
+                    .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detalles);
+
+                return RedirectToAction("Create");
+
+            }
+        }
+
+        public ActionResult Down(int id)
+        {
+            var detalleTmp = _dbContext.DetalleVentasTmp
+                .SingleOrDefault(dvt => dvt.DetalleVentaTmpId == id);
+            VentaEditViewModel ventaVm = new VentaEditViewModel
+            {
+                Clientes = CombosHelper.GetClientes()
+            };
+            if (detalleTmp.Cantidad - 1 < 0)
+            {
+                var detalles = _dbContext.DetalleVentasTmp
+                    .Include(dvt => dvt.Producto)
+                    .ToList();
+                ventaVm.DetallesVenta = Mapper
+                    .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detalles);
+                ModelState.AddModelError(string.Empty, "La cantidad ya está en 0");
+
+                return RedirectToAction("Create", ventaVm);
+
+            }
+
+            try
+            {
+                detalleTmp.Cantidad--;
+                _dbContext.Entry(detalleTmp).State = EntityState.Modified;
+                _dbContext.SaveChanges();
+                var detalles = _dbContext.DetalleVentasTmp
+                    .Include(dvt => dvt.Producto)
+                    .ToList();
+                ventaVm.DetallesVenta = Mapper
+                    .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detalles);
+
+                return RedirectToAction("Create");
+            }
+            catch (Exception ex)
+            {
+                var detalles = _dbContext.DetalleVentasTmp
+                    .Include(dvt => dvt.Producto)
+                    .ToList();
+                ventaVm.DetallesVenta = Mapper
+                    .Map<List<DetalleVentaTmp>, List<DetalleVentaListViewModel>>(detalles);
+                ModelState.AddModelError(string.Empty, "Error al intentar guardar un item de vta");
+
+                return RedirectToAction("Create");
+
+            }
+
+
         }
     }
 }

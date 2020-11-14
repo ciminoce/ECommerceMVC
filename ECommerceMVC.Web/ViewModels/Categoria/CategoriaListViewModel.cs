@@ -9,6 +9,10 @@ namespace ECommerceMVC.Web.ViewModels.Categoria
         [Display(Name = @"Categoría")]
         public string NombreCategoria { get; set; }
 
+        [Display(Name = "Cant. Productos")]
+        public int CantidadProductos { get; set; }
+
+
 
     }
 }

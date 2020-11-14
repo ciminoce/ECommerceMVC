@@ -28,8 +28,12 @@
             <th>
                 @Html.DisplayNameFor(m => m.Registros.First().NombreCategoria)
             </th>
-            <th>
 
+            <th>
+                @Html.DisplayNameFor(m => m.Registros.First().CantidadProductos)
+
+            </th>
+            <th>
             </th>
         </tr>
     </thead>
@@ -41,6 +45,9 @@
                 <tr>
                     <td>
                         @Html.DisplayFor(m => item.NombreCategoria)
+                    </td>
+                    <td style="text-align: right">
+                        @Html.DisplayFor(m => item.CantidadProductos)
                     </td>
                     <td>
                         <a href="@Url.Action("Edit","Categorias",new{id=item.CategoriaId})" class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>

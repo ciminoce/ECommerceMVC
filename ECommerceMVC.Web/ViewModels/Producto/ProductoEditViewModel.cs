@@ -37,7 +37,7 @@ namespace ECommerceMVC.Web.ViewModels.Producto
         public decimal UnidadesEnExistencia { get; set; }
         public bool Suspendido { get; set; }
 
-        public List<Proveedor> Proveedores { get; set; }
+        public List<Models.Proveedor> Proveedores { get; set; }
         public List<Models.Categoria> Categorias { get; set; }
 
         [DataType(DataType.ImageUrl)]

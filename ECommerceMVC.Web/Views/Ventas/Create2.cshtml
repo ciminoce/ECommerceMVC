@@ -1,0 +1,106 @@
+﻿@model ECommerceMVC.Web.ViewModels.Venta.VentaEditViewModel
+@{
+    ViewBag.Title = "Create";
+}
+<link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
+
+<h2>Nueva Venta</h2>
+@using (Html.BeginForm("Create", "Ventas", FormMethod.Post))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.ClienteId)
+                @Html.DropDownListFor(m => m.ClienteId, new SelectList(Model.Clientes, "ClienteId", "NombreCliente"), "Seleccione Cliente", new { @class = "form-control", autofocus = "autofocus" })
+                @Html.ValidationMessageFor(m => m.ClienteId, "", new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <a href="@Url.Action("Index", "Ventas")" class="btn btn-success">Volver</a>
+                <a href="@Url.Action("AddProduct","Ventas")" class="btn btn-warning">Agregar Producto</a>
+                <button class="btn btn-primary" type="submit">Guardar</button>
+
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.FechaVenta)
+                @Html.TextBoxFor(m => m.FechaVenta, "{0:dd/MM/yyyy}", new { @class = "form-control", @Value = DateTime.Today.ToShortDateString() })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.FechaEntrega)
+                @Html.TextBoxFor(m => m.FechaEntrega, "{0:dd/MM/yyyy}", new { @class = "form-control", @Value = DateTime.Today.AddDays(5).ToShortDateString() })
+            </div>
+
+        </div>
+        <div class="col-md-4">
+
+        </div>
+
+    </div>
+    <h2>Detalles</h2>
+    <hr />
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().Producto)</th>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().PrecioUnitario)</th>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().Cantidad)</th>
+                <th>@Html.DisplayNameFor(m => m.DetallesVenta.First().Total)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.DetallesVenta)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.Producto)
+                    </td>
+                    <td style="text-align: right">@Html.DisplayFor(m => item.PrecioUnitario)</td>
+                    <td style="text-align: right">@Html.DisplayFor(m => item.Cantidad)</td>
+                    <td style="text-align: right">@Html.DisplayFor(m => item.Total)</td>
+                    <td>
+                        <a onclick="upQuantity(@item.DetalleVentaId)" class="btn btn-info">+</a>
+                        <a onclick="downQuantity(@item.DetalleVentaId)" class="btn btn-danger">-</a>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td colspan="3"><strong>Total</strong></td>
+                <td style="text-align: right"><strong>@Model.DetallesVenta.Sum(dt => dt.Total).ToString("C")</strong>  </td>
+            </tr>
+        </tbody>
+    </table>
+
+}
+
+<input type="hidden" id="idItemVenta" value="" />
+
+@section scripts
+{
+    <script src="~/Scripts/jquery-ui-1.12.1.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+
+    <script>
+
+        function upQuantity(id) {
+            var url = '@Url.Action("Up","Ventas")';
+            url = url + '/' + id;
+            window.location.href = url;
+
+        }
+        function downQuantity(id) {
+            var url = '@Url.Action("Down","Ventas")';
+            url = url + '/' + id;
+            window.location.href = url;
+
+        }
+        $(document).ready(function () {
+            $("#FechaVenta").datepicker();
+
+        });
+
+    </script>
+}

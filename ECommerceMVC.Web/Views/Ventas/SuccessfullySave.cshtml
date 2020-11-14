@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Successful";
+}
+
+
+<h2 style="text-align: center">Items de Venta Guardados </h2>
+<table style="margin: 0px auto">
+    <tr>
+
+        <td>Venta Nro:</td>
+        <td style="font-weight: bold">: @ViewBag.VentaId</td>
+    </tr>
+</table>
+@using (Html.BeginForm())
+{
+    <div style="padding: 10px 0px; text-align: center">
+        <td style="margin-left: 9px;">@Html.ActionLink("Generar Pdf", "GeneratePdf", "Ventas", new { id = ViewBag.VentaId }, new { @class = "btn btn-warning", @target = "_blank" })</td>
+        <td style="margin-left: 9px;">@Html.ActionLink("Nueva", "Create", "Ventas", new { @class = "btn btn-primary" })</td>
+        <td style="margin-left: 9px;">@Html.ActionLink("Volver", "Index", "Ventas", new { @class = "btn btn-success" })</td>
+    </div>
+}

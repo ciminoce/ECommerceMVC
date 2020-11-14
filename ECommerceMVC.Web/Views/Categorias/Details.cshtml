@@ -1,7 +1,108 @@
-﻿
+﻿@model ECommerceMVC.Web.ViewModels.Categoria.CategoriaDetailsViewModel
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>Detalles de Categoría</h2>
+<hr />
+<div class="form-group">
+    @Html.LabelFor(m => m.NombreCategoria)
+    @Html.TextBoxFor(m => m.NombreCategoria, new { @class = "form-control", @readonly = true })
+</div>
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.listaProductos.First().NombreProducto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.listaProductos.First().PrecioUnitario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.listaProductos.First().UnidadesEnExistencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.listaProductos.First().Suspendido)
+            </th>
 
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.listaProductos.Any())
+        {
+            foreach (var item in Model.listaProductos)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(m => item.NombreProducto)
+                    </td>
+                    <td style="text-align: right">
+                        $@Html.DisplayFor(m => item.PrecioUnitario)
+                    </td>
+                    <td style="text-align: right">
+                        @Html.DisplayFor(m => item.UnidadesEnExistencia)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(m => item.Suspendido)
+                    </td>
+
+                    <td>
+                        <a href="@Url.Action("EditProduct", "Categorias", new {id = item.ProductoId})" class="btn btn-warning"><i class="fas fa-edit"></i> Editar</a>
+                        <a onclick="getId(@item.ProductoId)" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal">
+                            <i class="fas fa-trash-alt"></i> Suspender
+                        </a>
+
+                    </td>
+                </tr>
+            }
+
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" style="text-align: center">No se agregaron productos todavía</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmar Operación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Desea suspender el producto seleccionado?
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-primary" onclick="suspenderProducto()">Si</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="productId" value="" />
+<input type="hidden" id="productName" value="" />
+<script>
+
+    function getId(id) {
+        $("#productId").val(id);
+    }
+
+    function suspenderProducto() {
+        let url = '@Url.Action("SuspendProduct","Categorias")';
+        console.log;
+        url = url + '/' + $("#productId").val();
+        window.location.href = url;
+    }
+
+</script>
