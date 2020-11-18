@@ -97,10 +97,10 @@ namespace ECommerceMVC.Web.Controllers
                 return View("Create2", ventaVm);
             }
 
-            var cantidadItems = _dbContext.DetalleVentasTmp.Count();
+            var cantidadItems = _dbContext.DetalleVentasTmp.Count(dvt=>dvt.Cantidad>0);
             if (cantidadItems == 0)
             {
-                ModelState.AddModelError(string.Empty, "Debe contener al menos un item");
+                ModelState.AddModelError(string.Empty, "Debe contener al menos un item o items con cantidades superiores a 0");
                 ventaVm.Clientes = CombosHelper.GetClientes();
                 List<DetalleVentaTmp> detallesTmp = _dbContext
                     .DetalleVentasTmp.Include(dvt => dvt.Producto)
@@ -113,6 +113,7 @@ namespace ECommerceMVC.Web.Controllers
 
             }
 
+            LimpiarListaDeItemsTemporales();
             Venta venta = Mapper.Map<VentaEditViewModel, Venta>(ventaVm);
             using (var tran = _dbContext.Database.BeginTransaction())
             {
@@ -153,6 +154,20 @@ namespace ECommerceMVC.Web.Controllers
 
                 }
             }
+        }
+
+        private void LimpiarListaDeItemsTemporales()
+        {
+            var listaTemp = _dbContext.DetalleVentasTmp.ToList();
+            foreach (var detalleVentaTmp in listaTemp)
+            {
+                if (detalleVentaTmp.Cantidad==0)
+                {
+                    _dbContext.DetalleVentasTmp.Remove(detalleVentaTmp);
+                }
+            }
+
+            _dbContext.SaveChanges();
         }
 
         public ActionResult AddProduct()

@@ -16,17 +16,20 @@ namespace ECommerceMVC.Web.Controllers
     public class ClientesController : Controller
     {
         private readonly NeptunoDbContext _dbContext;
+        private readonly ApplicationDbContext _applicationDbContext;
         private readonly int _registrosPorPagina = 10;
         private Listador<ClienteListViewModel> _listador;
-
+        private string emailAnterior;
         public ClientesController()
         {
             _dbContext = new NeptunoDbContext();
+            _applicationDbContext=new ApplicationDbContext();
         }
 
         // GET: Clientes
         public ActionResult Index(int pagina = 1)
         {
+            Session["emailAnterior"] = null;
             int totalRegistros = _dbContext.Clientes.Count();
 
             var clientes = _dbContext.Clientes
@@ -93,22 +96,42 @@ namespace ECommerceMVC.Web.Controllers
 
             var cliente = Mapper.Map<ClienteEditViewModel, Cliente>(clienteVm);
 
-            if (!_dbContext.Clientes.Any(ct => ct.NombreCliente == cliente.NombreCliente ||
+            if (_dbContext.Clientes.Any(ct => ct.NombreCliente == cliente.NombreCliente ||
                                                ct.Email==cliente.Email))
             {
-                //TODO: Se debe guardar el cliente en usuarios como cliente
-                _dbContext.Clientes.Add(cliente);
-                _dbContext.SaveChanges();
-                TempData["Msg"] = "Registro agregado";
+                clienteVm.Paises = CombosHelper.GetPaises();
+                clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
 
-                return RedirectToAction("Index");
-
+                ModelState.AddModelError(string.Empty, "Registro repetido...");
+                return View(clienteVm);
+                
             }
-            clienteVm.Paises = CombosHelper.GetPaises();
-            clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
 
-            ModelState.AddModelError(string.Empty, "Registro repetido...");
-            return View(clienteVm);
+            using (var tran=_dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _dbContext.Clientes.Add(cliente);
+                    _dbContext.SaveChanges();
+
+                    UsersHelper.CreateUserAsp(cliente.Email,"Cliente");
+                    tran.Commit();
+                    TempData["Msg"] = "Registro agregado";
+
+                    return RedirectToAction("Index");
+
+                }
+                catch (Exception)
+                {
+                    tran.Rollback();
+                    clienteVm.Paises = CombosHelper.GetPaises();
+                    clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
+
+                    ModelState.AddModelError(string.Empty, "Registro repetido...");
+                    return View(clienteVm);
+                }
+            }
+
 
         }
 
@@ -176,6 +199,8 @@ namespace ECommerceMVC.Web.Controllers
                 return HttpNotFound();
             }
 
+            emailAnterior = cliente.Email;
+            Session["emailAnterior"] = emailAnterior;
             ClienteEditViewModel clienteVm = Mapper
                 .Map<Cliente, ClienteEditViewModel>(cliente);
             clienteVm.Paises = CombosHelper.GetPaises();
@@ -196,32 +221,52 @@ namespace ECommerceMVC.Web.Controllers
             var cliente = Mapper.Map<ClienteEditViewModel, Cliente>(clienteVm);
             clienteVm.Paises = CombosHelper.GetPaises();
             clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
-
-            try
-            {
-                if (_dbContext.Clientes.Any(ct => ct.NombreCliente == cliente.NombreCliente
-                                                    && ct.ClienteId != cliente.ClienteId))
-                {
-                    clienteVm.Paises = CombosHelper.GetPaises();
-                    clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
-
-                    ModelState.AddModelError(string.Empty, "Registro repetido");
-                    return View(clienteVm);
-                }
-                //TODO:Ver si existe como usuario, caso contrario darlo de alta
-                //TODO:Ver si cambió el mail=>cambiar en la tabla de users.
-                _dbContext.Entry(cliente).State = EntityState.Modified;
-                _dbContext.SaveChanges();
-                TempData["Msg"] = "Registro editado";
-                return RedirectToAction("Index");
-            }
-            catch (Exception e)
+            if (_dbContext.Clientes.Any(ct => ct.NombreCliente == cliente.NombreCliente
+                                                && ct.ClienteId != cliente.ClienteId))
             {
                 clienteVm.Paises = CombosHelper.GetPaises();
                 clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
 
-                ModelState.AddModelError(string.Empty, "Error inesperado al intentar editar un registro");
+                ModelState.AddModelError(string.Empty, "Registro repetido");
                 return View(clienteVm);
+            }
+
+            if (Session["emailAnterior"]!=null)
+            {
+                emailAnterior = (string) Session["emailAnterior"];
+            }
+
+            using (var tran=_dbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _dbContext.Entry(cliente).State = EntityState.Modified;
+                    _dbContext.SaveChanges();
+                    if (emailAnterior==null)
+                    {
+                        UsersHelper.CreateUserAsp(cliente.Email,"Cliente");
+                        
+                    }else if (emailAnterior!=cliente.Email)
+                    {
+                        UsersHelper.UpdateUserName(emailAnterior, cliente.Email);
+                    }
+
+                    tran.Commit();
+                    Session["emailAnterior"] = null;
+
+                    TempData["Msg"] = "Registro editado";
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    tran.Rollback();
+                    clienteVm.Paises = CombosHelper.GetPaises();
+                    clienteVm.Ciudades = CombosHelper.GetCiudades(clienteVm.PaisId);
+
+                    ModelState.AddModelError(string.Empty, "Error inesperado al intentar editar un registro");
+                    return View(clienteVm);
+                }
+                
             }
         }
 
