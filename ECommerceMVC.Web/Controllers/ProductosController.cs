@@ -236,8 +236,6 @@ namespace ECommerceMVC.Web.Controllers
                     ModelState.AddModelError(string.Empty, "Registro repetido");
                     return View(productoVm);
                 }
-                //TODO:Ver si existe como usuario, caso contrario darlo de alta
-                //TODO:Ver si cambió el mail=>cambiar en la tabla de users.
                 _dbContext.Entry(producto).State = EntityState.Modified;
                 _dbContext.SaveChanges();
                 TempData["Msg"] = "Registro editado";
